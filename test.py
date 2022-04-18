@@ -37,3 +37,4 @@ print(m.multiply(5))
 
 
 print(m.multiply_list([1, 2, 3, 4, 5]))
+print(m.image)

@@ -1,5 +1,6 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include <pybind11/numpy.h>
 #include <iostream>
 using namespace std;
 
@@ -44,6 +45,22 @@ public:
         }
         return items;
     }
+
+    std::vector<std::vector<uint8_t>> make_image()
+    {
+        auto out = std::vector<std::vector<uint8_t>>();
+        for (auto i = 0; i < 128; i++)
+        {
+            out.push_back(std::vector<uint8_t>(64));
+            for (auto j = 0; j < 30; j++)
+            {
+                for (auto j = 0; j < 30; j++)
+                {
+                    out[i][j] = 255;
+                }
+            }
+        }
+    }
 };
 
 PYBIND11_MODULE(module_name, handle)
@@ -54,5 +71,10 @@ PYBIND11_MODULE(module_name, handle)
     py::class_<SomeClass>(handle, "PyClass")
         .def(py::init<float>())
         .def("multiply", &SomeClass::multiply)
-        .def("multiply_list", &SomeClass::multiply_list);
+        .def("multiply_list", &SomeClass::multiply_list)
+        // .def("make_image", &SomeClass::make_image);
+        .def_property_readonly("image", [](SomeClass &self)
+                               {
+				      py::array out = py::cast(self.make_image());
+				      return out; });
 }
